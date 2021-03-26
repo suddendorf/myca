@@ -1,0 +1,16 @@
+<p>grid works!</p>
+<mat-grid-list cols="4" rowHeight="100px">
+  <mat-grid-tile
+      *ngFor="let tile of tiles"
+      [colspan]="tile.cols"
+      [rowspan]="tile.rows"
+      [style.background]="tile.color">
+      <cal-month></cal-month>
+    {{tile.text}}
+  </mat-grid-tile>
+</mat-grid-list>
+<cal-month></cal-month>
+<mat-radio-button></mat-radio-button>
+<!-- Copyright 2020 Google LLC. All Rights Reserved.
+    Use of this source code is governed by an MIT-style license that
+    can be found in the LICENSE file at http://angular.io/license -->
