@@ -7,15 +7,7 @@ import { DataService } from '../data.service';
   styleUrls: ['./chess.component.scss']
 })
 export class ChessComponent implements OnInit {
-  brett: string[] = ["wT1", "wP1", "wL1", "wK", "wD", "wL2", "wP2", "wT2",
-    "wB1", "wB2", "wB3", "wB4", "wB5", "wB6", "wB7", "wB8",
-    "", "", "", "", "", "", "", "",
-    "", "", "", "", "", "", "", "",
-    "", "", "", "", "", "", "", "",
-    "", "", "", "", "", "", "", "",
-    "sB1", "sB2", "sB3", "sB4", "sB5", "sB6", "sB7", "sB8",
-    "sT1", "sP1", "sL1", "sK", "sD", "sL2", "sP2", "sT2"
-  ];
+  brett: string[] = [];
   brettStart: string[] = [
     "sT1", "sP1", "sL1", "sK", "sD", "sL2", "sP2", "sT2",
     "sB1", "sB2", "sB3", "sB4", "sB5", "sB6", "sB7", "sB8",
@@ -27,12 +19,17 @@ export class ChessComponent implements OnInit {
     "wT1", "wP1", "wL1", "wK", "wD", "wL2", "wP2", "wT2"
   ];
   zug: string = "?";
+  zuege: string[];
   constructor(private service: DataService) { }
 
   ngOnInit(): void {
     this.service.getJSON('brett')
       .subscribe(
         ret => this.brett = ret,
+        error => console.log(error));
+    this.service.getJSON('zuege')
+      .subscribe(
+        ret => this.zuege = ret,
         error => console.log(error));
   }
   reset(): void {
@@ -41,9 +38,14 @@ export class ChessComponent implements OnInit {
       .subscribe(
         ret => console.log(ret),
         error => console.log(error));
+    this.zuege = [];
+    this.service.putJSON('zuege', JSON.stringify(this.zuege))
+      .subscribe(
+        ret => console.log(ret),
+        error => console.log(error));
   }
   move(): void {
-    this.kFrom=this.kTo=-1;
+    this.kFrom = this.kTo = -1;
     let from = ChessComponent.getPos(this.zug);
     if (!from) return;
     let to = ChessComponent.getPos(this.zug.substring(3));
@@ -52,13 +54,19 @@ export class ChessComponent implements OnInit {
     this.brett[from] = "";
     this.service.putJSON('brett', JSON.stringify(this.brett))
       .subscribe(
+        ret => this.zuege.push(this.zug),
+        error => console.log(error));
+    this.service.putJSON('zuege', JSON.stringify(this.zuege))
+      .subscribe(
         ret => console.log(ret),
         error => console.log(error));
 
   }
-
-  static getPos(z:string):number{
-    if ( !z)return -1;
+  getImage(i: number): string {
+    return "assets/koenig.svg";
+  }
+  static getPos(z: string): number {
+    if (!z) return -1;
     z = z.toLowerCase();
     let colA = z.charCodeAt(0) - "a".charCodeAt(0);
     let rowA = z.charCodeAt(1) - "1".charCodeAt(0);
@@ -70,8 +78,8 @@ export class ChessComponent implements OnInit {
   }
 
   getColor(i: number): string {
-    if ( i==this.kFrom){ return 'green'};
-    if ( i==this.kTo){ return 'orange'};
+    if (i == this.kFrom) { return 'green' };
+    if (i == this.kTo) { return 'orange' };
     let n = Math.floor(i / 8);
     if (n % 2 == 0) {
       if (i % 2 == 0) {
@@ -88,12 +96,23 @@ export class ChessComponent implements OnInit {
     }
     return 'red';
   }
-  kFrom:number;
-  kTo:number;
+  kFrom: number;
+  kTo: number;
 
   keyPress(event: KeyboardEvent) {
     const inputChar = event.key;
-    this.kFrom=ChessComponent.getPos(this.zug+inputChar);
-    this.kTo=ChessComponent.getPos(this.zug.substring(3)+inputChar);
+    console.log(event);
+    let s1 = this.zug;
+    if (s1.length < 2) {
+      s1 += inputChar;
+    }
+    this.kFrom = ChessComponent.getPos(s1);
+
+
+    let s2 = this.zug.substring(3);
+    if (s2.length < 2) {
+      s2 += inputChar;
+    }
+    this.kTo = ChessComponent.getPos(s2);
   }
 }

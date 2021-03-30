@@ -1,15 +1,23 @@
 <p>chess works!</p>
 <mat-grid-list cols="8" rowHeight="100px">
   <mat-grid-tile
-  *ngFor="let val of brett;let i=index"
-  [style.background]="getColor(i)"
-  [style.color]="getColor(i+8)">
-    {{val}}
+    *ngFor="let val of brett; let i = index"
+    [style.background]="getColor(i)"
+    [style.color]="getColor(i + 8)"
+  >
+
+<!--img height="100px" [src]="getImage(i)"-->
+    {{ val }}
   </mat-grid-tile>
 </mat-grid-list>
 <mat-form-field class="example-full-width">
   <mat-label>hier den nächsten Zug eintragen</mat-label>
-  <input matInput placeholder="Zug" [(ngModel)]="zug" (keypress)="keyPress($event)">
+  <input
+    matInput
+    placeholder="Zug"
+    [(ngModel)]="zug"
+    (keypress)="keyPress($event)"
+  />
 </mat-form-field>
 <div class="zug-container">
   <button mat-mini-fab color="accent" aria-label="zug" (click)="move()">
@@ -17,7 +25,17 @@
   </button>
 </div>
 <div class="zug-container">
-  <button mat-mini-fab  aria-label="reset" (click)="reset()">
+  <button mat-mini-fab aria-label="reset" (click)="reset()">
     <mat-icon>delete</mat-icon>
   </button>
 </div>
+
+<mat-grid-list cols="2" rowHeight="100px">
+  <mat-grid-tile
+    *ngFor="let val of zuege; let i = index"
+    [style.background]="getColor(i)"
+    [style.color]="getColor(i + 8)"
+  >
+    {{ val }}
+  </mat-grid-tile>
+</mat-grid-list>
