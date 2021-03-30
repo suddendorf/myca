@@ -12,7 +12,7 @@ import { MyMaterialModule } from './material-modul';
 import { CalMonthComponent } from './cal-month/cal-month.component';
 import { ChessComponent } from './chess/chess.component';
 import { FormsModule } from '@angular/forms';
-
+import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,7 +25,8 @@ import { FormsModule } from '@angular/forms';
     FormsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MyMaterialModule
+    MyMaterialModule,
+    HttpClientModule
   ],
   exports: [],
   providers: [
