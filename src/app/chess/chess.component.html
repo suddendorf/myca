@@ -1,0 +1,18 @@
+<p>chess works!</p>
+<mat-grid-list cols="8" rowHeight="100px">
+  <mat-grid-tile
+  *ngFor="let val of brett;let i=index"
+  [style.background]="getColor(i)"
+  [style.color]="getColor(i+8)">
+    {{val}}
+  </mat-grid-tile>
+</mat-grid-list>
+<mat-form-field class="example-full-width">
+  <mat-label>hier den nächsten Zug eintragen</mat-label>
+  <input matInput placeholder="Zug" [(ngModel)]="zug">
+</mat-form-field>
+<div class="zug-container">
+  <button mat-mini-fab color="accent" aria-label="zug" (click)="move()">
+    <mat-icon>done</mat-icon>
+  </button>
+</div>

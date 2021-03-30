@@ -10,15 +10,19 @@ import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from '@angular/material/form-field';
 import { GridComponent } from './grid/grid.component';
 import { MyMaterialModule } from './material-modul';
 import { CalMonthComponent } from './cal-month/cal-month.component';
+import { ChessComponent } from './chess/chess.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     AppComponent,
     GridComponent,
-    CalMonthComponent
+    CalMonthComponent,
+    ChessComponent
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MyMaterialModule
