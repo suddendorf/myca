@@ -9,10 +9,15 @@
 </mat-grid-list>
 <mat-form-field class="example-full-width">
   <mat-label>hier den nächsten Zug eintragen</mat-label>
-  <input matInput placeholder="Zug" [(ngModel)]="zug">
+  <input matInput placeholder="Zug" [(ngModel)]="zug" >
 </mat-form-field>
 <div class="zug-container">
   <button mat-mini-fab color="accent" aria-label="zug" (click)="move()">
     <mat-icon>done</mat-icon>
+  </button>
+</div>
+<div class="zug-container">
+  <button mat-mini-fab  aria-label="reset" (click)="reset()">
+    <mat-icon>delete</mat-icon>
   </button>
 </div>
