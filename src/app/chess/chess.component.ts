@@ -43,7 +43,7 @@ export class ChessComponent implements OnInit {
         error => console.log(error));
   }
   move(): void {
-    this.kFrom=this.kTo=-1;
+    this.kFrom = this.kTo = -1;
     let from = ChessComponent.getPos(this.zug);
     if (!from) return;
     let to = ChessComponent.getPos(this.zug.substring(3));
@@ -57,8 +57,8 @@ export class ChessComponent implements OnInit {
 
   }
 
-  static getPos(z:string):number{
-    if ( !z)return -1;
+  static getPos(z: string): number {
+    if (!z) return -1;
     z = z.toLowerCase();
     let colA = z.charCodeAt(0) - "a".charCodeAt(0);
     let rowA = z.charCodeAt(1) - "1".charCodeAt(0);
@@ -68,10 +68,38 @@ export class ChessComponent implements OnInit {
     console.log("from:" + from);
     return from;
   }
+  select(i: number) {
+    if ( this.kFrom == i){
+      this.kFrom =null;
+      return;
+    }
 
+    if ( this.kTo == i){
+      this.kTo =null;
+      return;
+    }
+    if (!this.kFrom) {
+      this.kFrom = i;
+    } else {
+      this.kTo = i;
+    }
+    this.zugToString();
+  }
+
+  zugToString(): void {
+    this.zug = ChessComponent.getName(this.kFrom)+'-'+ChessComponent.getName(this.kTo);
+  }
+  static getName(n: number): string {
+    if (n==null) return '?';
+    let k = n;
+    let col = n%8;
+    let row = 8-Math.ceil(k/8);
+    let c = String.fromCharCode('A'.charCodeAt(0)+col);
+    return c+row;
+  }
   getColor(i: number): string {
-    if ( i==this.kFrom){ return 'green'};
-    if ( i==this.kTo){ return 'orange'};
+    if (i == this.kFrom) { return 'green' };
+    if (i == this.kTo) { return 'orange' };
     let n = Math.floor(i / 8);
     if (n % 2 == 0) {
       if (i % 2 == 0) {
@@ -88,12 +116,12 @@ export class ChessComponent implements OnInit {
     }
     return 'red';
   }
-  kFrom:number;
-  kTo:number;
+  kFrom: number;
+  kTo: number;
 
   keyPress(event: KeyboardEvent) {
     const inputChar = event.key;
-    this.kFrom=ChessComponent.getPos(this.zug+inputChar);
-    this.kTo=ChessComponent.getPos(this.zug.substring(3)+inputChar);
+    this.kFrom = ChessComponent.getPos(this.zug + inputChar);
+    this.kTo = ChessComponent.getPos(this.zug.substring(3) + inputChar);
   }
 }

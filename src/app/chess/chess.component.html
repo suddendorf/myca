@@ -3,7 +3,8 @@
   <mat-grid-tile
   *ngFor="let val of brett;let i=index"
   [style.background]="getColor(i)"
-  [style.color]="getColor(i+8)">
+  [style.color]="getColor(i+8)"
+  (click)="select(i)">
     {{val}}
   </mat-grid-tile>
 </mat-grid-list>
