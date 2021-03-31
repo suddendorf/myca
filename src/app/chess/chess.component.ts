@@ -47,11 +47,19 @@ export class ChessComponent implements OnInit {
     this.zug = null;
     this.kFrom = null;
     this.kTo = null;
+    this.status = 'White';
   }
   move(): void {
-    let from = ChessComponent.getPos(this.zug);
-    if (!from) return;
-    let to = ChessComponent.getPos(this.zug.substring(3));
+    if ( this.zuege && this.zuege.length%2==1){
+      this.status='Black';
+    }else{
+      this.status = 'White';
+    }
+
+    let from = this.kFrom; //ChessComponent.getPos(this.zug);
+    if (from==null) return;
+    let to = this.kTo;//ChessComponent.getPos(this.zug.substring(3));
+    if (to==null) return;
     console.log("to:" + to);
     this.brett[to] = this.brett[from];
     this.brett[from] = "";
@@ -63,40 +71,39 @@ export class ChessComponent implements OnInit {
       .subscribe(
         ret => console.log(ret),
         error => console.log(error));
-    this.status = this.kFrom + ':' + from + '-' + this.kTo + ':' + to;
     this.kFrom = this.kTo = null;
   }
   getImage(i: number): string {
     return "assets/koenig.svg";
   }
-  static getPos(z: string): number {
-    if (!z) return -1;
-    z = z.toLowerCase();
-    let colA = z.charCodeAt(0) - "a".charCodeAt(0);
-    let rowA = z.charCodeAt(1) - "1".charCodeAt(0);
-    console.log("colA:" + colA);
-    console.log("rowA:" + rowA);
-    let from = (8 - rowA) * 8 + colA;
-    console.log("from:" + from);
-    return from;
-  }
-  select(i: number) {
-    if (this.kFrom == i) {
-      this.kFrom = null;
-      return;
-    }
+  // static getPos(z: string): number {
+  //   if (!z) return -1;
+  //   z = z.toLowerCase();
+  //   let colA = z.charCodeAt(0) - "a".charCodeAt(0);
+  //   let rowA = z.charCodeAt(1) - "1".charCodeAt(0);
+  //   console.log("colA:" + colA);
+  //   console.log("rowA:" + rowA);
+  //   let from = (8 - rowA) * 8 + colA;
+  //   console.log("from:" + from);
+  //   return from;
+  // }
+   select(i: number) {
+     if (this.kFrom == i) {
+       this.kFrom = null;
+       return;
+     }
 
-    if (this.kTo == i) {
-      this.kTo = null;
-      return;
-    }
-    if (!this.kFrom) {
-      this.kFrom = i;
-    } else {
-      this.kTo = i;
-    }
-    this.zugToString();
-  }
+     if (this.kTo == i) {
+       this.kTo = null;
+       return;
+     }
+     if (!this.kFrom) {
+       this.kFrom = i;
+     } else {
+       this.kTo = i;
+     }
+     this.zugToString();
+   }
 
   zugToString(): void {
     this.zug = ChessComponent.getName(this.kFrom) + '-' + ChessComponent.getName(this.kTo);
@@ -105,7 +112,7 @@ export class ChessComponent implements OnInit {
     if (n == null) return '?';
     let k = n;
     let col = n % 8;
-    let row = 9 - Math.floor(k / 8);
+    let row = 8 - Math.floor(k / 8);
     let c = String.fromCharCode('a'.charCodeAt(0) + col);
     return c + row;
   }
@@ -131,21 +138,5 @@ export class ChessComponent implements OnInit {
   kFrom: number;
   kTo: number;
 
-  keyPress(event: KeyboardEvent) {
-    const inputChar = event.key;
-    console.log(event);
-    return;
-    let s1 = this.zug;
-    if (s1.length < 2) {
-      s1 += inputChar;
-    }
-    this.kFrom = ChessComponent.getPos(s1);
 
-
-    let s2 = this.zug.substring(3);
-    if (s2.length < 2) {
-      s2 += inputChar;
-    }
-    this.kTo = ChessComponent.getPos(s2);
-  }
 }
