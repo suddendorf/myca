@@ -1,4 +1,4 @@
-<p>{{status}}</p>
+
 <div (window:resize)="onResize($event)"></div>
 <mat-grid-list cols="8" [rowHeight]="cellHeight">
   <mat-grid-tile
@@ -21,7 +21,7 @@
   </button>
 </div>
 
-<mat-grid-list cols="2" rowHeight="100px">
+<mat-grid-list cols="2" rowHeight="20px">
   <mat-grid-tile
     *ngFor="let val of zuege; let i = index"
     [style.background]="getColor(i)"
@@ -30,3 +30,4 @@
     {{ val }}
   </mat-grid-tile>
 </mat-grid-list>
+<p>{{status}}</p>
