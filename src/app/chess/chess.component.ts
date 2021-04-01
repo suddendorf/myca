@@ -7,8 +7,8 @@ import { DataService } from '../data.service';
   styleUrls: ['./chess.component.scss']
 })
 export class ChessComponent implements OnInit {
-  brett: string[] = [];
-  brettStart: string[] = [
+  brett: string[] = ChessComponent.brettStart;
+  static brettStart: string[] = [
     "sT1", "sP1", "sL1", "sK", "sD", "sL2", "sP2", "sT2",
     "sB1", "sB2", "sB3", "sB4", "sB5", "sB6", "sB7", "sB8",
     "", "", "", "", "", "", "", "",
@@ -21,9 +21,11 @@ export class ChessComponent implements OnInit {
   zug: string = "?";
   zuege: string[];
   status: string;
+  cellHeight: any;
   constructor(private service: DataService) { }
 
   ngOnInit(): void {
+    this.cellHeight = window.innerWidth/8;
     this.service.getJSON('brett')
       .subscribe(
         ret => this.brett = ret,
@@ -33,8 +35,12 @@ export class ChessComponent implements OnInit {
         ret => this.zuege = ret,
         error => console.log(error));
   }
+  onResize(event:any){
+    this.cellHeight = window.innerWidth/8;
+
+  }
   reset(): void {
-    this.brett = this.brettStart;
+    this.brett = ChessComponent.brettStart;
     this.service.putJSON('brett', JSON.stringify(this.brett))
       .subscribe(
         ret => console.log(ret),
@@ -74,7 +80,12 @@ export class ChessComponent implements OnInit {
     this.kFrom = this.kTo = null;
   }
   getImage(i: number): string {
-    return "assets/koenig.svg";
+    let name = this.brett[i];
+    if ( name && name.length>2){
+      name = name.substring(0,2);
+    }
+    console.log(name);
+    return "./assets/"+name+".svg";
   }
   // static getPos(z: string): number {
   //   if (!z) return -1;

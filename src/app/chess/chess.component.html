@@ -1,22 +1,15 @@
 <p>{{status}}</p>
-<mat-grid-list cols="8" rowHeight="100px">
+<div (window:resize)="onResize($event)"></div>
+<mat-grid-list cols="8" [rowHeight]="cellHeight">
   <mat-grid-tile
   *ngFor="let val of brett;let i=index"
   [style.background]="getColor(i)"
   [style.color]="getColor(i+8)"
   (click)="select(i)">
-    {{val}}
-  </mat-grid-tile>
+    <img [src]="getImage(i)" [alt]="val" [width]="cellHeight*0.8">
+   </mat-grid-tile>
 </mat-grid-list>
-<mat-form-field class="example-full-width">
-  <mat-label>hier den nächsten Zug eintragen</mat-label>
-  <input
-    matInput
-    placeholder="Zug"
-    [(ngModel)]="zug"
-
-  />
-</mat-form-field>
+{{zug}}
 <div class="zug-container">
   <button mat-mini-fab color="accent" aria-label="zug" (click)="move()">
     <mat-icon>done</mat-icon>
