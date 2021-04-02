@@ -1,0 +1,22 @@
+.container {
+  display: flex; /* or inline-flex */
+  flex-wrap: wrap;
+}
+.brett {
+  align-items: center;
+  width:90%;
+}
+.zuege {
+  overflow-y:scroll;
+
+}
+.zug{
+  background-color: lightgrey;
+  width:100%;
+  font-size: 18px;
+  text-align: center;
+
+}
+.zug-button{
+  padding: 20px;
+}

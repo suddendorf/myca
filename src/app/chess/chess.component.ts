@@ -19,25 +19,37 @@ export class ChessComponent implements OnInit {
     "wT1", "wP1", "wL1", "wD", "wK", "wL2", "wP2", "wT2"
   ];
   zug: string = "?";
+  displayedColumns: string[] = ['zug'];
+
   zuege: string[];
   status: string;
-  cellHeight: any;
+  cellHeight:number;
   constructor(private service: DataService) { }
 
   ngOnInit(): void {
-    this.cellHeight = window.innerWidth / 8;
+   let w = Math.min(window.innerWidth,window.innerHeight);
+    this.cellHeight = (w*0.9)  / 8;
+    console.log(w+">"+window.innerHeight+":"+window.innerWidth);
     this.service.getJSON('brett')
       .subscribe(
         ret => this.brett = ret,
         error => console.log(error));
     this.service.getJSON('zuege')
       .subscribe(
-        ret => this.zuege = ret,
+        ret => {this.zuege = ret; this.scrollToBottom('zuege');}
+        ,
         error => console.log(error));
   }
+ scrollToBottom (id:string) {
+    var div = document.getElementById(id);
+    div.scrollTop = div.scrollHeight - div.clientHeight;
+ }
   onResize(event: any) {
     this.cellHeight = window.innerWidth / 8;
 
+  }
+  getHeight(){
+    return this.cellHeight*8+'px';
   }
   reset(): void {
     this.brett = ChessComponent.brettStart;
@@ -56,7 +68,7 @@ export class ChessComponent implements OnInit {
     this.status = 'White';
   }
   move(): void {
-    let from = this.kFrom; //ChessComponent.getPos(this.zug);
+    let from = this.kFrom;
     if (from == null) return;
     let to = this.kTo;//ChessComponent.getPos(this.zug.substring(3));
     if (to == null) return;
@@ -72,6 +84,15 @@ export class ChessComponent implements OnInit {
   }
   addZug(zug: string): void {
     this.zuege.push(this.zug);
+
+    const z  = Object.assign([], this.zuege);
+    this.zuege=z;
+    this.scrollToBottom('zuege');
+    if (this.zuege.length %2 ==1){
+      this.status='schwarz';
+    }else{
+      this.status = 'weiß';
+    }
     this.service.putJSON('zuege', JSON.stringify(this.zuege))
       .subscribe(
         ret => console.log(ret),
@@ -96,6 +117,8 @@ export class ChessComponent implements OnInit {
   //   return from;
   // }
   select(i: number) {
+
+    console.log(i);
     if (this.kFrom == i) {
       this.kFrom = null;
       return;
@@ -105,7 +128,7 @@ export class ChessComponent implements OnInit {
       this.kTo = null;
       return;
     }
-    if (!this.kFrom) {
+    if (this.kFrom==null) {
       this.kFrom = i;
     } else {
       this.kTo = i;
