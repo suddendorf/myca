@@ -3,7 +3,7 @@
   <div class="brett">
     <mat-grid-list cols="8" [rowHeight]="cellHeight">
       <mat-grid-tile
-        *ngFor="let val of brett; let i = index"
+        *ngFor="let val of vBrett; let i = index"
         [style.background]="getColor(i)"
         [style.color]="getColor(i + 8)"
         (click)="select(i)"
@@ -33,13 +33,18 @@
     {{ zug }}
   </div>
   <div class="zug-button">
-    <button mat-fab color="accent" aria-label="zug" (click)="move()">
+    <button mat-fab color="accent" aria-label="zug" (click)="move()" [disabled]="!canMove">
       <mat-icon>done</mat-icon>
     </button>
   </div>
   <div class="zug-button">
     <button mat-fab aria-label="reset" (click)="reset()">
       <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+  <div class="zug-button">
+    <button mat-fab aria-label="rotate" (click)="toggleRotate()">
+      <mat-icon>rotate</mat-icon>
     </button>
   </div>
   <p>{{ status }}</p>
