@@ -15,7 +15,6 @@ export class DataService {
   public getJSON(key:string): Observable<any> {
     key = key+DataService.version;
     let url = this.server+"?action=get&key="+key;
-    console.log(url);
     return this.http.get(url);
   }
 
@@ -23,7 +22,6 @@ export class DataService {
     key = key+DataService.version;
     let url = this.server+"?action=put&key="+key+"&value="+value;
     url = encodeURI(url);
-    console.log(url);
     return this.http.get(url);
   }
 

@@ -1,19 +1,20 @@
 <div class="container">
   <div (window:resize)="onResize($event)"></div>
-  <div class="brett">
-    <mat-grid-list cols="8" [rowHeight]="cellHeight">
+  <h2>{{myColor}}</h2>
+  <div class="brett" [style.width]="getWidth()+'px'">
+    <mat-grid-list cols="8" [rowHeight]="getHeight()/8+'px'">
       <mat-grid-tile
         *ngFor="let val of vBrett; let i = index"
         [style.background]="getColor(i)"
         [style.color]="getColor(i + 8)"
         (click)="select(i)"
       >
-        <img [src]="getImage(i)" [alt]="val" [width]="cellHeight * 0.8" />
+        <img [src]="getImage(i)" [alt]="val" [width]="getHeight()/8" />
       </mat-grid-tile>
     </mat-grid-list>
   </div>
 
-  <div id="zuege" class="zuege" [style.height]="getHeight()">
+  <div id="zuege" class="zuege" [style.height]="getHeight()+'px'">
     <table mat-table [dataSource]="zuege" class="mat-elevation-z8">
       <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->

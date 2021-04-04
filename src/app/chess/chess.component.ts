@@ -23,32 +23,30 @@ export class ChessComponent implements OnInit {
 
   zuege: string[];
   status: string;
-  cellHeight: number;
   myColor: string;
   canMove = true;
   interval: any;
-  rotate=false;
+  rotate = false;
   vBrett: string[];
   constructor(private service: DataService) { }
 
   ngOnInit(): void {
-    let w = Math.min(window.innerWidth, window.innerHeight);
-    this.cellHeight = (w * 0.5) / 8;
-    console.log(w + ">" + window.innerHeight + ":" + window.innerWidth);
     this.interval = setInterval(() => {
       this.read();
     }, 1000 * 1);
   }
+  getWidth(): number {
+    let w = Math.min(window.innerWidth, window.innerHeight) * 0.9;
+    return w;
+  }
 
   read() {
-    console.log('read');
     this.service.getJSON('color')
       .subscribe(
         color => this.readDetails(color),
         error => console.log(error));
   }
   readDetails(color: string) {
-    console.log('my'+this.myColor+' color:'+color);
     if (color == 'white') {
       this.status = 'black';
     } else {
@@ -56,7 +54,7 @@ export class ChessComponent implements OnInit {
     }
 
     if (this.myColor != color) {
-      if ( this.myColor){
+      if (this.myColor) {
         clearInterval(this.interval);
       }
       this.canMove = true;
@@ -71,12 +69,14 @@ export class ChessComponent implements OnInit {
           error => console.log(error));
     }
   }
-  setBrett(brett: string []): void {
+  setBrett(brett: string[]): void {
     this.brett = brett;
-    this.vBrett =brett;
-    if (this.rotate){
-      for ( let i = 0;i<brett.length;i++){
-    //    this.vBrett[63-i]=this.brett[i];
+    this.vBrett = Array.from(brett);
+    if (this.rotate) {
+      for (let i = 0; i < brett.length; i++) {
+        const row = Math.floor(i / 8);
+        const col = i % 8;
+        this.vBrett[7 - row + col] = this.brett[i];
       }
     }
   }
@@ -86,11 +86,10 @@ export class ChessComponent implements OnInit {
     div.scrollTop = div.scrollHeight - div.clientHeight;
   }
   onResize(event: any) {
-    this.cellHeight = window.innerWidth*0.5 / 8;
 
   }
   getHeight() {
-    return this.cellHeight * 8 + 'px';
+    return this.getWidth();
   }
   reset(): void {
     this.brett = ChessComponent.brettStart;
@@ -114,15 +113,15 @@ export class ChessComponent implements OnInit {
     this.myColor = null;
     this.canMove = true;
     this.rotate = false;
-    this.vBrett = this.brett;
+    this.vBrett = Array.from(this.brett);
   }
   move(): void {
     let from = this.kFrom;
-    if (from == null) return;
     let to = this.kTo;//ChessComponent.getPos(this.zug.substring(3));
     if (to == null) return;
     console.log("to:" + to);
-    this.moveWithRule(from,to);
+    this.moveWithRule(from, to);
+    this.setBrett(this.brett);
     this.service.putJSON('brett', JSON.stringify(this.brett))
       .subscribe(
         ret => this.addZug(this.zug),
@@ -134,49 +133,72 @@ export class ChessComponent implements OnInit {
     }, 1000 * 1);
 
   }
-  moveWithRule(from:number,to:number) {
-    const figur= this.brett[from];
-    const row = Math.floor(to/8);
+  noPick(from: number) {
+    let figure = this.brett[from];
+    console.log("Figur:" + figure);
+    if (!figure || figure.length < 2) {
+      return true;
+    }
+    if (this.wrongColor(from)) return true;
+    return false;
+  }
+  wrongColor(from: number) {
+    let figure = this.brett[from];
+    if ('black' == this.myColor) {
+      if (figure.startsWith('w')) {
+        return true;
+      }
+    }
+
+    if ('white' == this.myColor) {
+      if (figure.startsWith('s')) {
+        return true;
+      }
+    }
+  }
+  moveWithRule(from: number, to: number) {
+    const figur = this.brett[from];
+    const row = Math.floor(to / 8);
     //rochade
-    if ( figur.substring(0,2) == 'wK' && from ==60){
+    if (figur.substring(0, 2) == 'wK' && from == 60) {
       this.brett[to] = this.brett[from];
       this.brett[from] = "";
-      if ( to == 62){
+      if (to == 62) {
         this.brett[61] = 'wT2';
         this.brett[63] = "";
         return;
       }
-      if ( to == 58){
+      if (to == 58) {
         this.brett[59] = 'wT1';
         this.brett[56] = "";
         return;
       }
     }
 
-    if ( figur.substring(0,2) == 'sK' && from ==4){
+    if (figur.substring(0, 2) == 'sK' && from == 4) {
       this.brett[to] = this.brett[from];
       this.brett[from] = "";
-      if ( to == 6){
+      if (to == 6) {
         this.brett[5] = 'sT2';
         this.brett[7] = "";
         return;
       }
-      if ( to == 2){
+      if (to == 2) {
         this.brett[3] = 'sT1';
         this.brett[0] = "";
         return;
       }
     }
     //Bauerntausch
-    if ( figur.substring(0,2) == 'wB'){
-      if ( row==0){
+    if (figur.substring(0, 2) == 'wB') {
+      if (row == 0) {
         this.brett[to] = 'wD';
         this.brett[from] = "";
         return;
       }
     }
-    if ( figur.substring(0,2) == 'sB'){
-      if ( row==7){
+    if (figur.substring(0, 2) == 'sB') {
+      if (row == 7) {
         this.brett[to] = 'sD';
         this.brett[from] = "";
         return;
@@ -192,9 +214,9 @@ export class ChessComponent implements OnInit {
       this.zuege = [];
     }
     console.log(this.myColor);
-    if (this.zuege.length==0  ) {
+    if (this.zuege.length % 2 == 0) {
       this.myColor = 'white';
-    } else if (this.zuege.length == 1) {
+    } else {
       this.myColor = 'black';
     }
     this.zuege.push(this.zug);
@@ -231,7 +253,6 @@ export class ChessComponent implements OnInit {
   // }
   select(i: number) {
 
-    console.log(i);
     if (this.kFrom == i) {
       this.kFrom = null;
       return;
@@ -242,9 +263,11 @@ export class ChessComponent implements OnInit {
       return;
     }
     if (this.kFrom == null) {
+      if (this.noPick(i)) return;
       this.kFrom = i;
     } else {
       this.kTo = i;
+      if (this.wrongColor(i)) return;
     }
     this.zugToString();
   }
@@ -282,7 +305,7 @@ export class ChessComponent implements OnInit {
   kFrom: number;
   kTo: number;
 
-  toggleRotate(){
+  toggleRotate() {
     this.rotate = !this.rotate;
     this.setBrett(this.brett);
   }
