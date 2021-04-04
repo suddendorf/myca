@@ -54,7 +54,7 @@ export class ChessComponent implements OnInit {
     // }
   }
   getWidth(): number {
-    let w = Math.min(window.innerWidth, window.innerHeight) * 0.9;
+    let w = Math.min(window.innerWidth, window.innerHeight*0.9) * 0.9;
     return w;
   }
 
@@ -185,30 +185,34 @@ export class ChessComponent implements OnInit {
     const row = Math.floor(to / 8);
     //rochade
     if (figur.substring(0, 2) == 'wK' && from == 60) {
-      this.brett[to] = this.brett[from];
-      this.brett[from] = "";
       if (to == 62) {
-        this.brett[61] = 'wT2';
+        this.brett[to] = this.brett[from];
+        this.brett[from] = "";
+          this.brett[61] = 'wT2';
         this.brett[63] = "";
         return;
       }
       if (to == 58) {
-        this.brett[59] = 'wT1';
+        this.brett[to] = this.brett[from];
+        this.brett[from] = "";
+          this.brett[59] = 'wT1';
         this.brett[56] = "";
         return;
       }
     }
 
     if (figur.substring(0, 2) == 'sK' && from == 4) {
-      this.brett[to] = this.brett[from];
-      this.brett[from] = "";
       if (to == 6) {
-        this.brett[5] = 'sT2';
+        this.brett[to] = this.brett[from];
+        this.brett[from] = "";
+          this.brett[5] = 'sT2';
         this.brett[7] = "";
         return;
       }
       if (to == 2) {
-        this.brett[3] = 'sT1';
+        this.brett[to] = this.brett[from];
+        this.brett[from] = "";
+          this.brett[3] = 'sT1';
         this.brett[0] = "";
         return;
       }

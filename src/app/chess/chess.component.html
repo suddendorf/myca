@@ -1,6 +1,6 @@
 <div class="container">
   <div (window:resize)="onResize($event)"></div>
-  <h2>{{myColor}}</h2>
+  <h2 style="width:'100%'">meine Farbe:{{myColor}}</h2>
   <div class="brett" [style.width]="getWidth()+'px'">
     <mat-grid-list cols="8" [rowHeight]="getHeight()/8+'px'">
       <mat-grid-tile
