@@ -28,12 +28,30 @@ export class ChessComponent implements OnInit {
   interval: any;
   rotate = false;
   vBrett: string[];
+  kFrom: number;
+  kTo: number;
   constructor(private service: DataService) { }
 
   ngOnInit(): void {
+    this.service.getJSON('brett')
+    .subscribe(
+      ret => this.setBrett(ret),
+      error => console.log(error));
+  this.service.getJSON('zuege')
+    .subscribe(
+      ret => { this.zuege = ret; this.scrollToBottom('zuege'); }
+      ,
+      error => console.log(error));
+
     this.interval = setInterval(() => {
       this.read();
     }, 1000 * 1);
+    this.myColor = sessionStorage.getItem('color');
+
+    this.brett = JSON.parse(sessionStorage.getItem('brett'));
+    // if ( ! this.brett){
+    //   this.brett = ChessComponent.brettStart;
+    // }
   }
   getWidth(): number {
     let w = Math.min(window.innerWidth, window.innerHeight) * 0.9;
@@ -72,11 +90,12 @@ export class ChessComponent implements OnInit {
   setBrett(brett: string[]): void {
     this.brett = brett;
     this.vBrett = Array.from(brett);
+    console.log(this.rotate);
     if (this.rotate) {
       for (let i = 0; i < brett.length; i++) {
         const row = Math.floor(i / 8);
         const col = i % 8;
-        this.vBrett[7 - row + col] = this.brett[i];
+        this.vBrett[(7 - row)*8 + col] = this.brett[i];
       }
     }
   }
@@ -93,6 +112,7 @@ export class ChessComponent implements OnInit {
   }
   reset(): void {
     this.brett = ChessComponent.brettStart;
+    sessionStorage.setItem('brett',JSON.stringify(this.brett));
     this.service.putJSON('brett', JSON.stringify(this.brett))
       .subscribe(
         ret => console.log(ret),
@@ -111,6 +131,8 @@ export class ChessComponent implements OnInit {
     this.kFrom = null;
     this.kTo = null;
     this.myColor = null;
+
+    sessionStorage.removeItem('color');
     this.canMove = true;
     this.rotate = false;
     this.vBrett = Array.from(this.brett);
@@ -122,6 +144,8 @@ export class ChessComponent implements OnInit {
     console.log("to:" + to);
     this.moveWithRule(from, to);
     this.setBrett(this.brett);
+
+    sessionStorage.setItem('brett',JSON.stringify(this.brett));
     this.service.putJSON('brett', JSON.stringify(this.brett))
       .subscribe(
         ret => this.addZug(this.zug),
@@ -219,6 +243,8 @@ export class ChessComponent implements OnInit {
     } else {
       this.myColor = 'black';
     }
+
+    sessionStorage.setItem('color',this.myColor);
     this.zuege.push(this.zug);
 
     const z = Object.assign([], this.zuege);
@@ -234,7 +260,7 @@ export class ChessComponent implements OnInit {
         error => console.log(error));
   }
   getImage(i: number): string {
-    let name = this.brett[i];
+    let name = this.vBrett[i];
     if (name && name.length > 2) {
       name = name.substring(0, 2);
     }
@@ -252,7 +278,11 @@ export class ChessComponent implements OnInit {
   //   return from;
   // }
   select(i: number) {
-
+    if (this.rotate){
+      const row = 7-Math.floor(i/8);
+      const col = i%8;
+      i = row*8+col;
+    }
     if (this.kFrom == i) {
       this.kFrom = null;
       return;
@@ -284,6 +314,11 @@ export class ChessComponent implements OnInit {
     return c + row;
   }
   getColor(i: number): string {
+    if ( this.rotate){
+      const row = 7-Math.floor(i / 8);
+      const col = i % 8;
+      i = row*8+col;
+    }
     if (i == this.kFrom) { return 'green' };
     if (i == this.kTo) { return 'orange' };
     let n = Math.floor(i / 8);
@@ -302,8 +337,6 @@ export class ChessComponent implements OnInit {
     }
     return 'red';
   }
-  kFrom: number;
-  kTo: number;
 
   toggleRotate() {
     this.rotate = !this.rotate;
