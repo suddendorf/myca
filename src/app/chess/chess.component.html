@@ -1,33 +1,52 @@
+<div class="container">
+  <div (window:resize)="onResize($event)"></div>
+  <h2 style="width:'100%'">meine Farbe:{{myColor}}</h2>
+  <div class="brett" [style.width]="getWidth()+'px'">
+    <mat-grid-list cols="8" [rowHeight]="getHeight()/8+'px'">
+      <mat-grid-tile
+        *ngFor="let val of vBrett; let i = index"
+        [style.background]="getColor(i)"
+        [style.color]="getColor(i + 8)"
+        (click)="select(i)"
+      >
+        <img [src]="getImage(i)" [alt]="val" [width]="getHeight()/8" />
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
 
-<div (window:resize)="onResize($event)"></div>
-<mat-grid-list cols="8" [rowHeight]="cellHeight">
-  <mat-grid-tile
-  *ngFor="let val of brett;let i=index"
-  [style.background]="getColor(i)"
-  [style.color]="getColor(i+8)"
-  (click)="select(i)">
-    <img [src]="getImage(i)" [alt]="val" [width]="cellHeight*0.8">
-   </mat-grid-tile>
-</mat-grid-list>
-{{zug}}
-<div class="zug-container">
-  <button mat-mini-fab color="accent" aria-label="zug" (click)="move()">
-    <mat-icon>done</mat-icon>
-  </button>
-</div>
-<div class="zug-container">
-  <button mat-mini-fab aria-label="reset" (click)="reset()">
-    <mat-icon>delete</mat-icon>
-  </button>
-</div>
+  <div id="zuege" class="zuege" [style.height]="getHeight()+'px'">
+    <table mat-table [dataSource]="zuege" class="mat-elevation-z8">
+      <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
 
-<mat-grid-list cols="2" rowHeight="20px">
-  <mat-grid-tile
-    *ngFor="let val of zuege; let i = index"
-    [style.background]="getColor(i)"
-    [style.color]="getColor(i + 8)"
-  >
-    {{ val }}
-  </mat-grid-tile>
-</mat-grid-list>
-<p>{{status}}</p>
+      <!-- Position Column -->
+      <ng-container matColumnDef="zug">
+        <th mat-header-cell *matHeaderCellDef>Zug</th>
+        <td mat-cell *matCellDef="let element">{{ element }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+
+  <div class="zug">
+    {{ zug }}
+  </div>
+  <div class="zug-button">
+    <button mat-fab color="accent" aria-label="zug" (click)="move()" [disabled]="!canMove">
+      <mat-icon>done</mat-icon>
+    </button>
+  </div>
+  <div class="zug-button">
+    <button mat-fab aria-label="reset" (click)="reset()">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+  <div class="zug-button">
+    <button mat-fab aria-label="rotate" (click)="toggleRotate()">
+      <mat-icon>cached</mat-icon>
+    </button>
+  </div>
+  <p>{{ status }}</p>
+</div>
