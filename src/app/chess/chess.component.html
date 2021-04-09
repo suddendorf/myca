@@ -1,14 +1,29 @@
 <div class="container">
   <div (window:resize)="onResize($event)"></div>
-  <h2 style="width:'100%'">meine Farbe:{{myColor}}</h2>
+  <h2 style="width:'120px'">Color:{{myColor}}</h2>
+  <div class="zug-button">
+    <button mat-fab color="accent" aria-label="zug" (click)="move()" [disabled]="!canMove()">
+      <mat-icon>done</mat-icon>
+    </button>
+  </div>
+  <div class="zug-button">
+    <button mat-fab aria-label="reset" (click)="reset()">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+  <div class="zug-button">
+    <button mat-fab aria-label="rotate" (click)="toggleRotate()">
+      <mat-icon>cached</mat-icon>
+    </button>
+  </div>
+
+  <div class="zug-button" (click)="toggleColor()">
+      <img width="56px" height="56px" src="assets/bw.png" >
+   </div>
   <div class="brett" [style.width]="getWidth()+'px'">
     <mat-grid-list cols="8" [rowHeight]="getHeight()/8+'px'">
-      <mat-grid-tile
-        *ngFor="let val of vBrett; let i = index"
-        [style.background]="getColor(i)"
-        [style.color]="getColor(i + 8)"
-        (click)="select(i)"
-      >
+      <mat-grid-tile *ngFor="let val of vBrett; let i = index" [style.background]="getColor(i)"
+        [style.color]="getColor(i + 8)" (click)="select(i)">
         <img [src]="getImage(i)" [alt]="val" [width]="getHeight()/8" />
       </mat-grid-tile>
     </mat-grid-list>
@@ -33,20 +48,8 @@
   <div class="zug">
     {{ zug }}
   </div>
-  <div class="zug-button">
-    <button mat-fab color="accent" aria-label="zug" (click)="move()" [disabled]="!canMove">
-      <mat-icon>done</mat-icon>
-    </button>
-  </div>
-  <div class="zug-button">
-    <button mat-fab aria-label="reset" (click)="reset()">
-      <mat-icon>delete</mat-icon>
-    </button>
-  </div>
-  <div class="zug-button">
-    <button mat-fab aria-label="rotate" (click)="toggleRotate()">
-      <mat-icon>cached</mat-icon>
-    </button>
-  </div>
-  <p>{{ status }}</p>
+
+  <p>{{ status }}
+
+  </p>
 </div>
