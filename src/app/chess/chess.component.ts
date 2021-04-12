@@ -1,4 +1,6 @@
+import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { DataService } from '../data.service';
 
 @Component({
@@ -29,9 +31,11 @@ export class ChessComponent implements OnInit {
   vBrett: string[];
   kFrom: number;
   kTo: number;
-  constructor(private service: DataService) { }
+  favIcon: HTMLLinkElement;
+  constructor(private service: DataService, private titleService: Title) { }
 
   ngOnInit(): void {
+    this.setTitle("who");
     this.service.getJSON('brett')
       .subscribe(
         ret => this.setBrett(ret),
@@ -50,9 +54,13 @@ export class ChessComponent implements OnInit {
       this.myColor = 'white';
     }
     this.brett = JSON.parse(sessionStorage.getItem('brett'));
-    // if ( ! this.brett){
-    //   this.brett = ChessComponent.brettStart;
-    // }
+    this.favIcon = document.querySelector('#appIcon');
+
+    this.favIcon.href = 'assets/wK.ico';
+  }
+  setTitle(s: string) {
+
+    this.titleService.setTitle("Chess: " + s);
   }
   getWidth(): number {
     let w = Math.min(window.innerWidth, window.innerHeight * 0.9) * 0.9;
@@ -60,59 +68,55 @@ export class ChessComponent implements OnInit {
   }
 
   read() {
-    this.service.getJSON('color')
-      .subscribe(
-        color => this.readDetails(color),
-        error => console.log(error));
+    console.log('reading:' + new Date().toISOString());
+    this.readDetails();
   }
-  readDetails(color: string) {
-
-
-    if (this.myColor != color) {
-      if (this.myColor) {
-        clearInterval(this.interval);
-      }
-      this.service.getJSON('brett')
-        .subscribe(
-          ret => this.setBrett(ret),
-          error => console.log(error));
-      this.service.getJSON('zuege')
-        .subscribe(
-          ret => { this.setZuege(ret); }
-          ,
-          error => console.log(error));
-    }
+  readDetails() {
+    let d = new Date();
+    this.service.getJSON('brett')
+      .subscribe(
+        ret => this.setBrett(ret),
+        error => console.log(error));
+    this.service.getJSON('zuege')
+      .subscribe(
+        ret => { this.setZuege(ret); }
+        ,
+        error => console.log(error));
   }
   setZuege(ret: any) {
     this.zuege = ret;
-    if ( this.zuege !=null){
-      if (this.zuege.length%2 == 0) {
+     if (this.zuege != null) {
+      if (this.zuege.length % 2 == 0) {
         this.status = 'white';
+        this.setTitle('white');
+
+        this.favIcon.href = 'assets/wK.ico';
       } else {
         this.status = 'black';
+        this.setTitle('black');
+        this.favIcon.href = 'assets/sK.ico';
       }
 
-    this.scrollToBottom('zuege');
+      this.scrollToBottom('zuege');
     }
   }
-  canMove():boolean{
-    if ( this.zug ==null || this.zug.indexOf('?')>=0){
+  canMove(): boolean {
+    if (this.zug == null || this.zug.indexOf('?') >= 0) {
       return false;
     }
-    if ( this.zuege !=null){
-      if (this.zuege.length%2 == 0 && this.myColor =='white') {
+    if (this.zuege != null) {
+      if (this.zuege.length % 2 == 0 && this.myColor == 'white') {
         return true;
-      } else if (this.zuege.length%2 == 1 && this.myColor =='black') {
+      } else if (this.zuege.length % 2 == 1 && this.myColor == 'black') {
         return true;
       }
     }
-      return false;
+    return false;
 
   }
   setBrett(brett: string[]): void {
     this.brett = brett;
     this.vBrett = Array.from(brett);
-    console.log(this.rotate);
     if (this.rotate) {
       for (let i = 0; i < brett.length; i++) {
         const row = Math.floor(i / 8);
@@ -168,10 +172,15 @@ export class ChessComponent implements OnInit {
       .subscribe(
         ret => this.addZug(this.zug),
         error => console.log(error));
+    let d = new Date();
+    let sd = d.toISOString().substring(0, 19);
+    this.service.putJSON('brett' + sd, JSON.stringify(this.brett))
+      .subscribe(
+        ret => this.addZug(this.zug),
+        error => console.log(error));
+
     this.kFrom = this.kTo = null;
-    this.interval = setInterval(() => {
-      this.read();
-    }, 1000 * 1);
+
 
   }
   noPick(from: number) {
