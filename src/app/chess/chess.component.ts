@@ -96,6 +96,9 @@ export class ChessComponent implements OnInit {
     }
   }
   canMove():boolean{
+    if ( this.zug ==null || this.zug.indexOf('?')>=0){
+      return false;
+    }
     if ( this.zuege !=null){
       if (this.zuege.length%2 == 0 && this.myColor =='white') {
         return true;
@@ -142,10 +145,6 @@ export class ChessComponent implements OnInit {
         ret => console.log(ret),
         error => console.log(error));
 
-    this.service.putJSON('color', JSON.stringify('none'))
-      .subscribe(
-        ret => console.log(ret),
-        error => console.log(error));
     this.zug = null;
     this.kFrom = null;
     this.kTo = null;
@@ -276,10 +275,7 @@ export class ChessComponent implements OnInit {
       .subscribe(
         ret => console.log(ret),
         error => console.log(error));
-    this.service.putJSON('color', JSON.stringify(this.myColor))
-      .subscribe(
-        ret => console.log(ret),
-        error => console.log(error));
+
   }
   getImage(i: number): string {
     let name = this.vBrett[i];
