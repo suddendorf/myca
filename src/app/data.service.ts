@@ -8,7 +8,7 @@ import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 export class DataService {
   //server: string="http://localhost:8080/map/Mapping";
   server: string="http://sddb.de/persist/Mapping";
-  static version ='';
+  static version ='1';
 
   constructor(private http: HttpClient) { }
 

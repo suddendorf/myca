@@ -1,3 +1,4 @@
+import { WHITE_ON_BLACK_CSS_CLASS } from '@angular/cdk/a11y/high-contrast-mode/high-contrast-mode-detector';
 import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
@@ -32,6 +33,7 @@ export class ChessComponent implements OnInit {
   kFrom: number;
   kTo: number;
   favIcon: HTMLLinkElement;
+  zugSelected: number = -1;
   constructor(private service: DataService, private titleService: Title) { }
 
   ngOnInit(): void {
@@ -85,7 +87,7 @@ export class ChessComponent implements OnInit {
   }
   setZuege(ret: any) {
     this.zuege = ret;
-     if (this.zuege != null) {
+    if (this.zuege != null) {
       if (this.zuege.length % 2 == 0) {
         this.status = 'white';
         this.setTitle('white');
@@ -102,6 +104,9 @@ export class ChessComponent implements OnInit {
   }
   canMove(): boolean {
     if (this.zug == null || this.zug.indexOf('?') >= 0) {
+      return false;
+    }
+    if ( this.zugSelected >=0){
       return false;
     }
     if (this.zuege != null) {
@@ -293,17 +298,6 @@ export class ChessComponent implements OnInit {
     }
     return "./assets/" + name + ".svg";
   }
-  // static getPos(z: string): number {
-  //   if (!z) return -1;
-  //   z = z.toLowerCase();
-  //   let colA = z.charCodeAt(0) - "a".charCodeAt(0);
-  //   let rowA = z.charCodeAt(1) - "1".charCodeAt(0);
-  //   console.log("colA:" + colA);
-  //   console.log("rowA:" + rowA);
-  //   let from = (8 - rowA) * 8 + colA;
-  //   console.log("from:" + from);
-  //   return from;
-  // }
   select(i: number) {
     if (this.rotate) {
       const row = 7 - Math.floor(i / 8);
@@ -376,5 +370,43 @@ export class ChessComponent implements OnInit {
       this.myColor = 'black';
     }
     console.log(this.myColor);
+  }
+  replay(i: number): void {
+    clearInterval( this.interval);
+    console.log(i);
+    this.zugSelected = i;
+    this.brett = Array.from(ChessComponent.brettStart);
+    for (let j = 0; j <= i; j++) {
+      let zug = this.zuege[j];
+      let from = zug.substring(0,2);
+      let to = zug.substring(3,5);
+      let f = ChessComponent.getPos(from);
+      let t = ChessComponent.getPos(to);
+      console.log(f,t);
+      this.kFrom = f;
+      this.kTo = t;
+      this.moveWithRule(f,t);
+    }
+    this.setBrett(this.brett);
+  }
+  static getPos(z: string): number {
+    if (!z) return -1;
+    z = z.toLowerCase();
+    let colA = z.charCodeAt(0) - "a".charCodeAt(0);
+    let rowA = z.charCodeAt(1) - "1".charCodeAt(0);
+    console.log("colA:" + colA);
+    console.log("rowA:" + rowA);
+    let from = (7 - rowA) * 8 + colA;
+    console.log("from:" + from);
+    return from;
+  }
+  getZugColor(i:number){
+    if ( this.zugSelected == i){
+      return 'green';
+    }
+    if ( this.zuege && i%2==1){
+      return 'grey';
+    }
+    return 'white';
   }
 }

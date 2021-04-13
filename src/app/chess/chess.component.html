@@ -37,7 +37,7 @@
       <!-- Position Column -->
       <ng-container matColumnDef="zug">
         <th mat-header-cell *matHeaderCellDef>Züge</th>
-        <td mat-cell *matCellDef="let element">{{ element }}</td>
+        <td mat-cell *matCellDef="let element;let i=index;" [style.background-color]="getZugColor(i)" (click)="replay(i)" >{{ element }}</td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
