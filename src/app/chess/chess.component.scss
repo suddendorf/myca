@@ -18,5 +18,27 @@
 
 }
 .zug-button{
-  padding: 5x;
+  padding: 2px;
+}
+.mat-row:nth-child(even){
+  background-color: #505050;
+  color: white;
+}
+
+.mat-row:nth-child(odd){
+  background-color: white;
+  color: black;
+}
+.mat-row{
+  height: 30px;
+}
+
+.mat-cell{
+  color:unset;
+}
+.mat-header-cell {
+  background-color: gray;
+  color: white;
+  flex-direction: column;
+  justify-content: center;
 }

@@ -176,7 +176,7 @@ export class ChessComponent implements OnInit {
     let sd = d.toISOString().substring(0, 19);
     this.service.putJSON('brett' + sd, JSON.stringify(this.brett))
       .subscribe(
-        ret => this.addZug(this.zug),
+        ret => console.log(ret),
         error => console.log(error));
 
     this.kFrom = this.kTo = null;
